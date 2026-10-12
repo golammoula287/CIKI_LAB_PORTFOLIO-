@@ -1,0 +1,298 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          Role      @default(EDITOR)
+  active        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model Department {
+  id          String @id @default(cuid())
+  slug        String @unique
+  name        String
+  description String
+  sortOrder   Int    @default(0)
+}
+
+model MembershipCategory {
+  id        String            @id @default(cuid())
+  key       String            @unique
+  label     String
+  sortOrder Int               @default(0)
+  people    ContentRevision[]
+}
+
+model Achievement {
+  id                  String                @id @default(cuid())
+  slug                String                @unique
+  version             Int                   @default(1)
+  publishedRevisionId String?               @unique
+  publishedRevision   AchievementRevision?  @relation("Published", fields: [publishedRevisionId], references: [id], onDelete: Restrict)
+  revisions           AchievementRevision[] @relation("History")
+  archivedAt          DateTime?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  redirects           AchievementRedirect[]
+}
+
+model AchievementRevision {
+  id                 String                  @id @default(cuid())
+  achievementId      String
+  achievement        Achievement             @relation("History", fields: [achievementId], references: [id], onDelete: Cascade)
+  publishedFor       Achievement?            @relation("Published")
+  version            Int
+  title              String
+  requestedSlug      String?
+  type               String
+  year               Int
+  status             String
+  authors            String
+  venue              String
+  abstract           String
+  url                String?
+  disclosureApproved Boolean                 @default(false)
+  createdBy          String
+  createdAt          DateTime                @default(now())
+  authorEntries      AchievementAuthor[]
+  departments        AchievementDepartment[]
+
+  @@unique([achievementId, version])
+  @@index([type, year, status])
+}
+
+enum ContentKind {
+  PAGE
+  DEPARTMENT
+  PERSON
+  POSITION
+  FAQ
+  ALBUM
+}
+
+model ContentRecord {
+  id                     String                  @id @default(cuid())
+  kind                   ContentKind
+  slug                   String
+  version                Int                     @default(1)
+  publishedRevisionId    String?                 @unique
+  publishedRevision      ContentRevision?        @relation("ContentPublished", fields: [publishedRevisionId], references: [id], onDelete: Restrict)
+  revisions              ContentRevision[]       @relation("ContentHistory")
+  archivedAt             DateTime?
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  incoming               ContentLink[]
+  achievementDepartments AchievementDepartment[]
+  authorEntries          AchievementAuthor[]
+  redirects              ContentRedirect[]
+
+  @@unique([kind, slug])
+  @@index([kind, archivedAt])
+}
+
+model ContentRevision {
+  id             String              @id @default(cuid())
+  recordId       String
+  record         ContentRecord       @relation("ContentHistory", fields: [recordId], references: [id], onDelete: Cascade)
+  publishedFor   ContentRecord?      @relation("ContentPublished")
+  version        Int
+  title          String
+  summary        String
+  body           String
+  payload        Json
+  seoTitle       String
+  seoDescription String
+  sortOrder      Int                 @default(0)
+  categoryId     String?
+  category       MembershipCategory? @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  advisory       Boolean             @default(false)
+  deadline       DateTime?
+  closed         Boolean             @default(false)
+  createdAt      DateTime            @default(now())
+  createdBy      String
+  links          ContentLink[]
+  media          RevisionMedia[]
+
+  @@unique([recordId, version])
+  @@index([sortOrder])
+  @@index([categoryId, advisory])
+  @@index([closed, deadline])
+}
+
+model ContentLink {
+  revisionId String
+  revision   ContentRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  targetId   String
+  target     ContentRecord   @relation(fields: [targetId], references: [id], onDelete: Restrict)
+
+  @@id([revisionId, targetId])
+  @@index([targetId])
+}
+
+model ContentRedirect {
+  id       String        @id @default(cuid())
+  kind     ContentKind
+  oldSlug  String
+  recordId String
+  record   ContentRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@unique([kind, oldSlug])
+}
+
+model AchievementRedirect {
+  oldSlug       String      @id
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+}
+
+model AchievementAuthor {
+  id          String              @id @default(cuid())
+  revisionId  String
+  revision    AchievementRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  personId    String?
+  person      ContentRecord?      @relation(fields: [personId], references: [id], onDelete: Restrict)
+  name        String
+  affiliation String
+  sortOrder   Int
+
+  @@unique([revisionId, sortOrder])
+}
+
+model AchievementDepartment {
+  revisionId   String
+  revision     AchievementRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  departmentId String
+  department   ContentRecord       @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@id([revisionId, departmentId])
+}
+
+model MediaAsset {
+  id         String          @id @default(cuid())
+  storageKey String          @unique
+  driver     String
+  name       String
+  mimeType   String
+  byteSize   Int
+  width      Int
+  height     Int
+  createdBy  String
+  createdAt  DateTime        @default(now())
+  references RevisionMedia[]
+  logoFor    SiteSettings[]
+}
+
+model RevisionMedia {
+  revisionId String
+  revision   ContentRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  assetId    String
+  asset      MediaAsset      @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@id([revisionId, assetId])
+  @@index([assetId])
+}
+
+model SiteSettings {
+  id        String      @id @default("site")
+  version   Int         @default(1)
+  payload   Json
+  logoId    String?
+  logo      MediaAsset? @relation(fields: [logoId], references: [id], onDelete: Restrict)
+  updatedAt DateTime    @updatedAt
+}
+
+model AccessGrant {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  email     String
+  name      String
+  role      Role
+  purpose   String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdBy String
+  createdAt DateTime  @default(now())
+
+  @@index([email, usedAt])
+}
+
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+}
+
+model AuditEvent {
+  id        String   @id @default(cuid())
+  actorId   String
+  operation String
+  entityId  String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
