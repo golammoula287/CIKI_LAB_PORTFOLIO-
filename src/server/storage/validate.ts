@@ -1,8 +1,8 @@
 import sharp from "sharp";
-export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+export const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
 export async function normalizeImage(bytes: Uint8Array) {
   if (!bytes.byteLength || bytes.byteLength > MAX_UPLOAD_BYTES)
-    throw new Error("Images must be no larger than 8 MB.");
+    throw new Error("Images must be no larger than 4 MB.");
   const image = sharp(bytes, { limitInputPixels: 40_000_000, animated: false });
   const metadata = await image.metadata();
   if (
@@ -20,6 +20,8 @@ export async function normalizeImage(bytes: Uint8Array) {
     })
     .webp({ quality: 85 })
     .toBuffer({ resolveWithObject: true });
+  if (result.data.length > MAX_UPLOAD_BYTES)
+    throw new Error("The processed image exceeds 4 MB. Use a smaller image.");
   return {
     bytes: result.data,
     width: result.info.width,

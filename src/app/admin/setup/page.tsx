@@ -2,6 +2,7 @@ import { requireStaff } from "@/server/auth";
 import { storageDriver } from "@/server/storage";
 export default async function Setup() {
   await requireStaff();
+  const driver = storageDriver();
   return (
     <>
       <div className="admin-heading">
@@ -20,10 +21,12 @@ export default async function Setup() {
         </p>
         <h2>Storage</h2>
         <p>
-          Selected driver: {storageDriver()}.{" "}
-          {storageDriver() === "local"
-            ? "Local files require persistent disk and a single shared storage host. Use S3-compatible private storage on serverless hosting."
-            : "S3 credentials and bucket access must be validated in your deployment environment."}
+          Selected driver: {driver}.{" "}
+          {driver === "local"
+            ? "Local files require persistent disk and a single shared storage host. Use Cloudinary or S3-compatible private storage on serverless hosting."
+            : driver === "cloudinary"
+              ? "Cloudinary stores authenticated images. Verify uploads and image access after deployment."
+              : "S3 credentials and bucket access must be validated in your deployment environment."}
         </p>
         <h2>Before production launch</h2>
         <p>

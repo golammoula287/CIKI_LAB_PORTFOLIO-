@@ -66,6 +66,17 @@ Signed-in staff can change their password at `/admin/account`. Keep at least two
 
 Local development uses `STORAGE_DRIVER=local` and an ignored `.storage` directory. This requires persistent disk and is not suitable for ephemeral serverless filesystems.
 
+For Cloudinary on Vercel, set the following in `.env` and Vercel environment settings:
+
+```dotenv
+STORAGE_DRIVER=cloudinary
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
+Find these credentials in your Cloudinary product environment. Keep the secret server-side. Uploads use authenticated assets; images continue to pass through the application's access checks. No unsigned upload preset or public delivery domain is required. Existing local or S3 assets retain their recorded storage driver and are not automatically migrated. Redeploy after changing Vercel environment variables.
+
 For S3-compatible hosting, set:
 
 ```dotenv
@@ -79,7 +90,7 @@ S3_FORCE_PATH_STYLE=false
 
 Supply AWS credentials securely through `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` or the hosting platform's IAM role. The account needs object put/get/delete permissions for the application's bucket. Keep the bucket private; browsers receive images through `/api/media/[id]` after the application checks publication or staff access.
 
-Uploads accept non-animated JPEG/PNG/WebP up to 8 MB and 40 million pixels. Images are decoded, stripped of metadata, bounded to 2400 pixels, and re-encoded as WebP. SVG and arbitrary file uploads are not supported. The server bounds the request body independently of client headers and checks the request origin. Files are private until used by a published revision or saved as the public site logo.
+Uploads accept non-animated JPEG/PNG/WebP up to 4 MB and 40 million pixels. Images are decoded, stripped of metadata, bounded to 2400 pixels, and re-encoded as WebP. SVG and arbitrary file uploads are not supported. The server bounds the request body independently of client headers and checks the request origin. Files are private until used by a published revision or saved as the public site logo.
 
 Archiving content removes its publication-based image access unless another published record or the site logo still uses the same asset. Image responses use no-store to avoid serving stale private content. Already downloaded files cannot be recalled. Deletion is allowed only for unreferenced images; revision history also counts as a reference.
 

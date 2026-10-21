@@ -1,4 +1,24 @@
-# Local verification
+# Verification record
+
+## Functional release checkpoint — 21 October 2026
+
+Verified with Node.js 24.22.0. UI redesign and additional features are deferred.
+
+- Production build and TypeScript checks passed.
+- ESLint and Prettier passed.
+- 13 unit tests passed, including Cloudinary signed authenticated operations and Vercel configuration failures.
+- 9 integration test results passed against isolated PGlite, covering migrations, idempotent seeds, drafts, publication, permissions, media references, settings, staff invitations, recovery, and last-owner protection.
+- Browser acceptance passed against the production build with an isolated database and matching Chromium: owner sign-in, dashboard, page drafts/publication, local image upload and archive privacy, recruitment deadlines, achievements, settings, staff invitations, editor permissions, last-owner protection, sitemap, and mobile navigation.
+- HTTP smoke checks passed against the live Neon-backed production server: 13 public/login routes, 16 protected admin redirects, missing routes, health, upload authorization, private media, sitemap, and invalid routes. `/api/ready` returned HTTP 200 after migrations and seed.
+- The configured live Neon pooled and direct endpoints were reachable. Both repository migrations were applied to the previously empty database. The catalog seed completed.
+- After the user updated Cloudinary credentials, live authenticated upload, signed image read, and deletion passed. The live check exposed a missing download timestamp, which was fixed and covered by the adapter test. Temporary test images were deleted.
+- Production dependency audit reported zero known vulnerabilities during this session.
+- The first live owner account requires user-supplied local bootstrap credentials. No default account was created.
+- Vercel deployment, domain/DNS changes, backup restore, monitoring, and approved lab content remain external launch steps. The assistant has not pushed, committed, or deployed the site.
+
+See [VERCEL.md](VERCEL.md) for hosting and custom domains and [ADMIN.md](ADMIN.md) for owner provisioning and content administration.
+
+## Earlier local checkpoint
 
 Verified locally on 12 October 2026 with Node.js 24.6.0. No live Neon database or deployed environment was used.
 

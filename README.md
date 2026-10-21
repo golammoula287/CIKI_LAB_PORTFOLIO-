@@ -8,6 +8,9 @@ The working project name, CIKI Lab, comes from the workspace name and should be 
 
 ## Documents
 
+- [Admin handover](docs/ADMIN.md): first sign-in, content entry, publishing, staff access, and recovery.
+- [Vercel deployment](docs/VERCEL.md): deploy with Neon and Cloudinary, configure environment variables, and initialize the database.
+
 - [Development setup](docs/SETUP.md): run locally, connect Neon, provision the first owner, and understand implementation limits.
 - [Operations](docs/OPERATIONS.md): deployment, storage, recovery, and monitoring.
 - [Project context](docs/PROJECT_CONTEXT.md): requirements, sitemap, admin capabilities, assumptions, and scope.

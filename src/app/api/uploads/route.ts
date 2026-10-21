@@ -9,6 +9,7 @@ import {
   MAX_UPLOAD_BYTES,
 } from "@/server/storage/validate";
 export const runtime = "nodejs";
+export const maxDuration = 60;
 export async function POST(request: Request) {
   const user = await getStaff();
   if (!user)
@@ -87,7 +88,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         error:
-          "Upload failed. Use a non-animated JPEG, PNG, or WebP under 8 MB and verify storage configuration.",
+          "Upload failed. Use a non-animated JPEG, PNG, or WebP under 4 MB and verify storage configuration.",
       },
       { status: 400 },
     );

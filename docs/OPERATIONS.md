@@ -1,8 +1,10 @@
 # Deployment and operations
 
+For Vercel with Neon and Cloudinary, follow [the Vercel deployment guide](VERCEL.md).
+
 ## Deployment sequence
 
-1. Choose a Node-compatible Next.js host. Configure a production Neon branch and private S3-compatible bucket separately from development/preview.
+1. Choose a Node-compatible Next.js host. Configure a production Neon branch and private Cloudinary environment or S3-compatible bucket separately from development/preview.
 2. Supply environment variables from `.env.example` using the host's secret manager. Use the public HTTPS origin consistently for authentication and metadata.
 3. Run `npm ci`, `npm run db:generate`, and `npm run build` against the reviewed source and lockfile.
 4. Take or confirm a recoverable database checkpoint according to your Neon plan. Apply migrations with `npm run db:deploy`, then run `npm run db:seed` if the content catalog has not been initialized.

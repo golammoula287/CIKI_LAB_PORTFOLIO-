@@ -126,3 +126,12 @@ Application implementation now covers Phases 1–5: all planned content/admin mo
 Local verification uses an isolated PostgreSQL-compatible database and browser workflows. The exact executed checks and limitations are recorded in [VERIFICATION.md](VERIFICATION.md). Live Neon/provider connectivity, production load tests, real content review, backup restore, hosting, and domain configuration remain Phase 6 tasks dependent on the user's credentials, infrastructure, and approved content. No external infrastructure has been provisioned or website deployed.
 
 Git checkpoint: the user owns all commits. The assistant must report the verified checkpoint and must not commit changes.
+
+
+## Functional release checkpoint — 21 October 2026
+
+Phases 1–5 have passed current integration and browser acceptance checks; UI redesign and additional features are deferred. Vercel build configuration, environment validation, Cloudinary storage integration, custom-domain instructions, and admin handover are implemented. The configured live Neon database has been migrated and seeded.
+
+Phase 6 is partially complete: repository preparation and local acceptance are verified. Pending external items are the first real owner account, Vercel deployment, domain/DNS verification, backup restore/monitoring, and approved public content. These items must not be marked complete until performed. See the current checkpoint in VERIFICATION.md.
+
+Cloudinary follow-up: updated credentials and the corrected download timestamp passed live upload, authenticated read, and deletion checks. The first owner account still requires the user to fill the temporary owner fields in `.env`.

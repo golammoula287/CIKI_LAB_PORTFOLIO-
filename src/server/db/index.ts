@@ -7,7 +7,12 @@ export function getDb() {
   if (!DATABASE_URL) throw new Error("Database is not configured.");
   if (!globalDb.db)
     globalDb.db = new PrismaClient({
-      adapter: new PrismaPg({ connectionString: DATABASE_URL }),
+      adapter: new PrismaPg({
+        connectionString: DATABASE_URL,
+        max: 3,
+        connectionTimeoutMillis: 10_000,
+        idleTimeoutMillis: 30_000,
+      }),
     });
   return globalDb.db;
 }

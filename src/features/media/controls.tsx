@@ -15,9 +15,15 @@ export function UploadImage() {
         setPending(true);
         setError("");
         try {
+          const body = new FormData(form);
+          const file = body.get("file");
+          if (file instanceof File && file.size > 4 * 1024 * 1024) {
+            setError("Choose an image no larger than 4 MB.");
+            return;
+          }
           const response = await fetch("/api/uploads", {
             method: "POST",
-            body: new FormData(form),
+            body,
           });
           const data = await response.json();
           if (!response.ok) setError(data.error || "Upload failed.");
@@ -42,7 +48,7 @@ export function UploadImage() {
         />
       </label>
       <p className="muted">
-        JPEG, PNG or WebP, maximum 8 MB. Images remain private until used by
+        JPEG, PNG or WebP, maximum 4 MB. Images remain private until used by
         published content.
       </p>
       {error && (
