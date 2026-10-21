@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { AdminNavigation } from "@/components/admin-navigation";
+import "./admin.css";
 import { Brand } from "@/components/site-shell";
 import { requireStaff, getAuth } from "@/server/auth";
 import { headers } from "next/headers";
@@ -21,29 +22,30 @@ export default async function AdminLayout({
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Brand settings={settings} />
-        <nav aria-label="Staff navigation">
-          <Link href="/admin">Overview</Link>
-          <Link href="/admin/achievements">Achievements</Link>
-          {Object.entries(modules).map(([key, module]) => (
-            <Link key={key} href={`/admin/${key}`}>
-              {module.label}
-            </Link>
-          ))}
-          <Link href="/admin/media">Media library</Link>
-          {user.role !== "EDITOR" && (
-            <>
-              <Link href="/admin/categories">Membership categories</Link>
-              <Link href="/admin/settings">Site settings</Link>
-            </>
-          )}
-          {user.role === "OWNER" && (
-            <Link href="/admin/users">Staff access</Link>
-          )}
-          <Link href="/admin/activity">Activity log</Link>
-          <Link href="/admin/account">Your account</Link>
-          <Link href="/admin/setup">Project setup</Link>
-          <Link href="/">View public website ↗</Link>
-        </nav>
+        <AdminNavigation
+          items={[
+            { href: "/admin", label: "Overview" },
+            { href: "/admin/achievements", label: "Achievements" },
+            ...Object.entries(modules).map(([key, module]) => ({
+              href: `/admin/${key}`,
+              label: module.label,
+            })),
+            { href: "/admin/media", label: "Media library" },
+            ...(user.role !== "EDITOR"
+              ? [
+                  { href: "/admin/categories", label: "Membership categories" },
+                  { href: "/admin/settings", label: "Site settings" },
+                ]
+              : []),
+            ...(user.role === "OWNER"
+              ? [{ href: "/admin/users", label: "Staff access" }]
+              : []),
+            { href: "/admin/activity", label: "Activity log" },
+            { href: "/admin/account", label: "Your account" },
+            { href: "/admin/setup", label: "Project setup" },
+            { href: "/", label: "View public website ↗" },
+          ]}
+        />
         <small>CIKI LAB / STAFF WORKSPACE</small>
       </aside>
       <main id="main" className="admin-main">

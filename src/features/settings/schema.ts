@@ -1,8 +1,12 @@
 import { z } from "zod";
 import { safeUrl } from "@/features/content/schema";
 export const settingsSchema = z.object({
-  labName: z.string().trim().min(2).max(80).default("CIKI Lab"),
-  tagline: z.string().trim().max(150).default("Research & Discovery"),
+  labName: z.string().trim().min(2).max(80).default("CIKI"),
+  tagline: z
+    .string()
+    .trim()
+    .max(150)
+    .default("Cognexa Center for Intelligence, Knowledge, and Innovation"),
   description: z
     .string()
     .trim()

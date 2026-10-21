@@ -1,0 +1,31 @@
+{
+  "purpose": "AI-generated conceptual banner illustrations for CIKI, not photographs of actual members or facilities",
+  "images": [
+    {
+      "name": "intelligence",
+      "path": "assets/banner/intelligence.webp",
+      "prompt": "A premium editorial scientific concept illustration for the CIKI research community website: a small elegant assembly of translucent frosted glass prisms linked by fine royal-blue optical threads, evoking intelligent computing and connected knowledge. White and very pale ice-blue studio background, deep navy and restrained royal blue accents, soft natural side lighting, subtle real shadows, tactile material, refined art direction. Landscape 4:3 framing, composition entirely usable in a cropped website photograph card, central subject with breathing room. No text, no logo, no watermarks, no brain, no glowing neon, no people, no fake charts. This is conceptual imagery, not a depiction of an actual laboratory.",
+      "tool": "built-in image_gen",
+      "mediaAssetId": "cmvihgf5g0000r8reiy7n6i4b",
+      "alt": "AI-generated illustration of glass shapes joined by blue threads, representing connected intelligence."
+    },
+    {
+      "name": "sustainability",
+      "path": "assets/banner/sustainability.webp",
+      "prompt": "A premium editorial macro photograph for the CIKI research community website, coordinated with a white, navy and royal-blue academic visual identity: a single delicate green leaf with intricate translucent veins beside a clear glass prism on a pale ice-blue surface. Natural botanical texture, scientific curiosity, sustainability, precise detail, gentle daylight and soft shadow, sophisticated understated composition. Landscape 4:3 framing, subject centered with breathing room for cropping into a website image card. No text, logo, watermark, people, fluorescent neon or graphics. Conceptual environmental research imagery, no asserted discoveries or institutional location.",
+      "tool": "built-in image_gen",
+      "mediaAssetId": "cmvihghar0002r8rerk02dv28",
+      "alt": "AI-generated botanical research still life of a green leaf and glass prism on an ice-blue surface."
+    },
+    {
+      "name": "discovery",
+      "path": "assets/banner/discovery.webp",
+      "prompt": "A premium editorial still-life scientific concept photograph for the CIKI research community website: close-up of a precision optical lens and clear glass sample slides on a clean pale ice-blue work surface, one subtle royal-blue reflected highlight, brushed silver and deep navy materials, quiet daylight, careful depth of field, tactile and realistic fine detail. Minimal, elegant international research publication art direction. Landscape 4:3 framing, central subject with ample breathing room for website card cropping. No text, logo, watermark, people, fake scientific results, digital overlays or neon glow. Illustrative fictional research still life, not an actual institution or facility.",
+      "tool": "built-in image_gen",
+      "mediaAssetId": "cmvihgjt50004r8reiu9wzh94",
+      "alt": "AI-generated research still life of a precision optical lens and glass sample slides."
+    }
+  ],
+  "storage": "cloudinary",
+  "usage": "Published Home page banner"
+}

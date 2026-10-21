@@ -3,9 +3,11 @@ node_modules/
 .npm-cache/
 .env*
 !.env.example
+!.env.production.example
 src/generated/
 *.tsbuildinfo
 coverage/
 .tmp/
 .storage/
 test-results/
+.DS_Store

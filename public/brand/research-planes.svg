@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="none">
+ <defs>
+  <linearGradient id="top" x1="160" y1="200" x2="460" y2="360" gradientUnits="userSpaceOnUse"><stop stop-color="#87C5FF"/><stop offset="1" stop-color="#125CE1"/></linearGradient>
+  <linearGradient id="fold" x1="190" y1="240" x2="390" y2="480" gradientUnits="userSpaceOnUse"><stop stop-color="#125CE1"/><stop offset="1" stop-color="#071B40"/></linearGradient>
+  <linearGradient id="edge" x1="330" y1="320" x2="510" y2="420" gradientUnits="userSpaceOnUse"><stop stop-color="#087CFA"/><stop offset="1" stop-color="#0B398D"/></linearGradient>
+ </defs>
+ <g stroke="#CFDEEF" stroke-width="1"><path d="M70 470L320 615L570 470M70 390L320 535L570 390"/><path d="M320 85V155M70 310V470M570 310V470" stroke-dasharray="3 7"/></g>
+ <path d="M100 405L320 278L540 405L320 532Z" fill="#E4EEFB"/>
+ <path d="M100 405L320 532L540 405V416L320 543L100 416Z" fill="#CDDFF4"/>
+ <path d="M142 320L320 217L498 320L320 423Z" fill="url(#top)"/>
+ <path d="M142 320L320 423V489L142 386Z" fill="url(#fold)"/>
+ <path d="M320 423L498 320V386L320 489Z" fill="url(#edge)"/>
+ <path d="M142 320L320 217L498 320" stroke="#B9DFFF" stroke-width="1.5"/>
+ <path d="M180 228L320 147L460 228L320 309Z" fill="url(#top)"/>
+ <path d="M180 228L320 309V365L180 284Z" fill="url(#fold)"/>
+ <path d="M320 309L460 228V284L320 365Z" fill="url(#edge)"/>
+ <path d="M180 228L320 147L460 228" stroke="#C2E5FF" stroke-width="1.5"/>
+ <path d="M220 136L320 78L420 136L320 194Z" fill="#D6EBFF"/>
+ <path d="M220 136L320 194V239L220 181Z" fill="#7BB5F7"/>
+ <path d="M320 194L420 136V181L320 239Z" fill="#3785EA"/>
+ <path d="M220 136L320 78L420 136" stroke="#F4FAFF" stroke-width="1.5"/>
+ <g stroke="#7597C6" stroke-width="1"><path d="M68 260h12m-6-6v12M556 455h12m-6-6v12"/></g>
+</svg>

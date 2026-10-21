@@ -13,32 +13,35 @@ const input = z
 const db = getDb();
 try {
   const password = await hashPassword(input.OWNER_PASSWORD);
-  await db.$transaction(async (tx) => {
-    // Serializes first-owner provisioning across concurrent executions.
-    await tx.$executeRaw`SELECT pg_advisory_xact_lock(81927341)`;
-    if (await tx.user.count({ where: { role: "OWNER" } }))
-      throw new Error("An owner already exists. Bootstrap is disabled.");
-    const id = randomUUID();
-    await tx.user.create({
-      data: {
-        id,
-        name: input.OWNER_NAME,
-        email: input.OWNER_EMAIL.toLowerCase(),
-        role: "OWNER",
-        accounts: {
-          create: {
-            id: randomUUID(),
-            accountId: id,
-            providerId: "credential",
-            password,
+  await db.$transaction(
+    async (tx) => {
+      // Serializes first-owner provisioning across concurrent executions.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(81927341)`;
+      if (await tx.user.count({ where: { role: "OWNER" } }))
+        throw new Error("An owner already exists. Bootstrap is disabled.");
+      const id = randomUUID();
+      await tx.user.create({
+        data: {
+          id,
+          name: input.OWNER_NAME,
+          email: input.OWNER_EMAIL.toLowerCase(),
+          role: "OWNER",
+          accounts: {
+            create: {
+              id: randomUUID(),
+              accountId: id,
+              providerId: "credential",
+              password,
+            },
           },
         },
-      },
-    });
-    await tx.auditEvent.create({
-      data: { actorId: id, entityId: id, operation: "OWNER_BOOTSTRAPPED" },
-    });
-  });
+      });
+      await tx.auditEvent.create({
+        data: { actorId: id, entityId: id, operation: "OWNER_BOOTSTRAPPED" },
+      });
+    },
+    { maxWait: 20_000, timeout: 30_000 },
+  );
   console.log(
     "Owner created. Remove OWNER_PASSWORD from your environment now.",
   );

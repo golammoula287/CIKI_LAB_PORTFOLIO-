@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ResearchIcon } from "@/components/research-icon";
 import { PageHeading, EmptyState } from "@/components/page-heading";
 import { Pagination } from "@/components/pagination";
 import { ContentView } from "@/components/content-view";
@@ -47,7 +48,7 @@ export default async function Research({
             href={`/research/${d.slug}`}
             key={d.id}
           >
-            <span className="discipline-icon">{d.data.icon}</span>
+            <ResearchIcon slug={d.slug} />
             <h2>{d.data.title}</h2>
             <p>{d.data.summary}</p>
             <span>Explore department ↗</span>

@@ -331,9 +331,20 @@ export function ContentEditor({
           </button>
         </fieldset>
       )}
-      {kind === "ALBUM" && (
+      {(kind === "ALBUM" || (kind === "PAGE" && slug === "home")) && (
         <fieldset>
-          <legend>Photos in display order</legend>
+          <legend>
+            {kind === "PAGE"
+              ? "Banner images (up to 3)"
+              : "Photos in display order"}
+          </legend>
+          {kind === "PAGE" && (
+            <p className="muted">
+              Choose up to three different uploaded images. Save and publish to
+              display them together in the animated homepage banner. Their order
+              controls placement.
+            </p>
+          )}
           {photos.map((photo, index) => (
             <div className="repeat-row" key={index}>
               <label className="field">
@@ -416,7 +427,7 @@ export function ContentEditor({
           <button
             type="button"
             className="button secondary"
-            disabled={photos.length >= 100}
+            disabled={photos.length >= (kind === "PAGE" ? 3 : 100)}
             onClick={() =>
               setPhotos([...photos, { assetId: "", alt: "", caption: "" }])
             }

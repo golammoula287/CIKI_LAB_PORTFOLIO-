@@ -2,6 +2,10 @@
 
 The repository includes `vercel.json`, uses the Next.js preset and Node.js 24, and runs `npm run build:vercel`. That command validates the environment, generates Prisma Client, and builds Next.js. It does not migrate, seed, or change a database.
 
+Use [`.env.production.example`](../.env.production.example) as the production variable checklist. Copy your existing Neon, authentication secret, and Cloudinary values from local `.env` into Vercel; replace only the two application URLs with the deployment's actual HTTPS origin. Do not upload `.env` to Git.
+
+For the database already configured during this setup, the migrations, initial content, and owner account have been created. Reusing that Neon database preserves your admin login and content. Skip the initialization and first-owner steps below for that database. Demo records have been removed; do not run `db:seed:demo` for production.
+
 1. Import this repository into Vercel. Use the repository root as the Root Directory and keep the checked-in build settings. Leave Output Directory at its Next.js default.
 2. Add the following variables to the Production environment. Use your actual public HTTPS address for both URL variables. Your local `.env` is ignored and is not uploaded to Vercel.
 

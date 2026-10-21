@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import sharp from "sharp";
 import {
   parseContent,
+  mediaIds,
   positionIsOpen,
   isModule,
 } from "../src/features/content/schema";
@@ -68,4 +69,19 @@ test("request size is bounded independently of headers", async () => {
     body: "123456789",
   });
   await assert.rejects(limitedBody(request, 4), /too large/);
+});
+
+test("page banner preserves multiple image selections and their media references", () => {
+  const photos = [1, 2, 3].map((index) => ({
+    assetId: `image-${index}`,
+    alt: `Research photograph ${index}`,
+    caption: "",
+  }));
+  const page = parseContent("PAGE", { title: "Home", photos });
+  assert.deepEqual(page.photos, photos);
+  assert.deepEqual(mediaIds(page), ["image-1", "image-2", "image-3"]);
+  assert.equal(
+    parseContent("PERSON", { title: "Researcher", photos }).photos.length,
+    0,
+  );
 });

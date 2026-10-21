@@ -36,3 +36,10 @@ Review **Activity log** for changes. Use **Your account** to change your passwor
 ## After custom-domain connection
 
 Use the chosen domain for both Production URL variables, redeploy, and sign in again on that domain. See [custom-domain setup](VERCEL.md#connect-your-own-domain).
+
+
+## Banner photographs
+
+Upload images in **Media library**. To choose the banner images, edit **Pages → Home → Banner images (up to 3)**. Click **Add photo +** for each image, select three different uploads, enter alt text, save, and publish. All three appear together in the animated composition. Their order controls placement. If fewer than three are selected, the cover image and then published gallery photos fill the remaining places. Up to three unique images appear; gallery alt text is retained. Draft and archived albums do not supply photos. Unpublished uploads stay private.
+
+The banner shows three overlapping full-size photos. Every six seconds the next image comes forward with gently randomized offsets and angles, bounded inside the banner area. Motion stops while visitors hover over or keyboard-focus the image stack and follows reduced-motion preferences; there is no visible pause button. Until photos are published, the supplied CIKI brand image appears instead. On phones the photos stack below the introduction so text and controls remain readable.

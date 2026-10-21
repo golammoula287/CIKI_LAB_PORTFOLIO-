@@ -21,7 +21,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "owner:create": "tsx scripts/create-owner.ts",
     "owner:recover": "tsx scripts/recover-owner.ts",
-    "build:vercel": "node --env-file-if-exists=.env scripts/check-vercel-env.mjs && npm run build"
+    "build:vercel": "node --env-file-if-exists=.env scripts/check-vercel-env.mjs && npm run build",
+    "db:seed:demo": "tsx scripts/seed-demo.ts"
   },
   "engines": {
     "node": "24.x"

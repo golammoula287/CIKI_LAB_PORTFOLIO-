@@ -78,6 +78,16 @@ try {
   const pageErrors: string[] = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
   visitor.on("pageerror", (error) => pageErrors.push(error.message));
+  const loginResponse = await visitor.request.get(`${origin}/login`);
+  expect(loginResponse.headers()["x-frame-options"]).toBe("DENY");
+  expect(loginResponse.headers()["x-content-type-options"]).toBe("nosniff");
+  expect(loginResponse.headers()["content-security-policy"]).toContain(
+    "frame-ancestors 'none'",
+  );
+  const anonymousUpload = await visitor.request.post(`${origin}/api/uploads`, {
+    headers: { origin },
+  });
+  expect(anonymousUpload.status()).toBe(401);
   await page.goto(`${origin}/login`);
   await page.getByLabel("Email", { exact: true }).fill("owner@example.test");
   await page.getByLabel("Password", { exact: true }).fill(fixture.password);
@@ -86,7 +96,83 @@ try {
   await expect(
     page.getByRole("heading", { name: "Hello, Test." }),
   ).toBeVisible();
+  await mkdir("test-results", { recursive: true });
+  await page.screenshot({
+    path: "test-results/admin-desktop.png",
+    fullPage: true,
+  });
   console.log("PASS real staff sign-in and dashboard");
+  const crossOriginUpload = await page.request.post(`${origin}/api/uploads`, {
+    headers: { origin: "https://untrusted.example" },
+  });
+  expect(crossOriginUpload.status()).toBe(403);
+  console.log("PASS browser security headers and upload access boundaries");
+  for (const width of [390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const route of [
+      "/admin",
+      "/admin/pages",
+      "/admin/settings",
+      "/admin/media",
+      "/admin/activity",
+    ]) {
+      await page.goto(`${origin}${route}`);
+      await expect(
+        page.locator('.admin-sidebar a[aria-current="page"]'),
+      ).toHaveCount(1);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+        ),
+        `${route} must fit at ${width}px`,
+      ).toBe(true);
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  console.log("PASS admin navigation and responsive workspace layouts");
+  await visitor.goto(`${origin}/`);
+  await visitor
+    .locator(".home-sections")
+    .getByRole("link", { name: "Research", exact: true })
+    .click();
+  await expect(visitor).toHaveURL(`${origin}/#research-areas`);
+  await expect(
+    visitor.getByRole("heading", { name: "Ideas across disciplines." }),
+  ).toBeVisible();
+  await visitor.emulateMedia({ reducedMotion: "reduce" });
+  expect(
+    await visitor.evaluate(
+      () => getComputedStyle(document.documentElement).scrollBehavior,
+    ),
+  ).toBe("auto");
+  await visitor.emulateMedia({ reducedMotion: "no-preference" });
+  console.log("PASS homepage section links and reduced-motion browsing");
+  const peopleMenu = visitor.locator(".nav-trigger");
+  await peopleMenu.focus();
+  await visitor.keyboard.press("Enter");
+  await expect(peopleMenu).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    visitor
+      .locator(".people-dropdown")
+      .getByRole("link", { name: /Advisory panel/ }),
+  ).toBeVisible();
+  await visitor.keyboard.press("Escape");
+  await expect(peopleMenu).toHaveAttribute("aria-expanded", "false");
+  await expect(peopleMenu).toBeFocused();
+  await peopleMenu.click();
+  await visitor
+    .locator(".people-dropdown")
+    .getByRole("link", { name: /Members/ })
+    .click();
+  await visitor.waitForURL(`${origin}/members`);
+  await expect(visitor.locator(".nav-trigger")).toHaveAttribute(
+    "aria-expanded",
+    "false",
+  );
+  console.log(
+    "PASS keyboard community dropdown, escape focus, and members navigation",
+  );
+
   const about = await fixture.db.contentRecord.findUniqueOrThrow({
     where: { kind_slug: { kind: "PAGE", slug: "about" } },
   });
@@ -192,6 +278,10 @@ try {
     .fill("A browser-tested upload");
   await page.getByRole("button", { name: "Save private draft" }).click();
   await page.waitForURL(/\/admin\/gallery\/[^/]+\?saved=1/);
+  await visitor.goto(`${origin}/`);
+  await expect(
+    visitor.locator(`.banner-gallery img[src="/api/media/${assetId}"]`),
+  ).toHaveCount(0);
   await page
     .getByRole("button", { name: "Publish saved revision", exact: true })
     .click();
@@ -206,6 +296,23 @@ try {
   await expect(
     visitor.getByRole("img", { name: "A green test image" }),
   ).toBeVisible();
+  await visitor.goto(`${origin}/`);
+  await expect(
+    visitor
+      .locator(".banner-gallery")
+      .getByRole("img", { name: "A green test image" }),
+  ).toBeVisible();
+  await expect(
+    visitor.getByRole("button", { name: "Pause motion" }),
+  ).toHaveCount(0);
+  await visitor.emulateMedia({ reducedMotion: "reduce" });
+  expect(
+    await visitor
+      .locator(".banner-photo")
+      .first()
+      .evaluate((el) => getComputedStyle(el).animationName),
+  ).toBe("none");
+  await visitor.emulateMedia({ reducedMotion: "no-preference" });
   await page.getByRole("button", { name: "Archive", exact: true }).click();
   await expect
     .poll(async () =>
@@ -214,8 +321,105 @@ try {
       ).status(),
     )
     .toBe(404);
+  await visitor.goto(`${origin}/`);
+  await expect(
+    visitor.locator(`.banner-gallery img[src="/api/media/${assetId}"]`),
+  ).toHaveCount(0);
+  console.log(
+    "PASS banner uses published photos, supports pause/reduced motion, and excludes drafts/archives",
+  );
   console.log(
     "PASS image upload, album publication, and media privacy after archive",
+  );
+  const bannerAssetIds = [assetId];
+  for (let index = 2; index <= 3; index++) {
+    const response = await ownerContext.request.post(`${origin}/api/uploads`, {
+      headers: { origin },
+      multipart: {
+        file: {
+          name: `banner-${index}.png`,
+          mimeType: "image/png",
+          buffer: png,
+        },
+      },
+    });
+    expect(response.status()).toBe(201);
+    const { id } = await response.json();
+    bannerAssetIds.push(id);
+    const row = await fixture.db.mediaAsset.findUniqueOrThrow({
+      where: { id },
+    });
+    generatedKeys.push(row.storageKey);
+  }
+  const homeRecord = await fixture.db.contentRecord.findUniqueOrThrow({
+    where: { kind_slug: { kind: "PAGE", slug: "home" } },
+  });
+  await page.goto(`${origin}/admin/pages/${homeRecord.id}`);
+  const bannerEditor = page.getByRole("group", {
+    name: "Banner images (up to 3)",
+  });
+  for (let index = 0; index < 3; index++) {
+    await bannerEditor.getByRole("button", { name: "Add photo +" }).click();
+    await bannerEditor
+      .getByLabel("Image", { exact: true })
+      .nth(index)
+      .selectOption(bannerAssetIds[index]);
+    await bannerEditor
+      .getByLabel("Alt text", { exact: true })
+      .nth(index)
+      .fill(`Banner research photo ${index + 1}`);
+  }
+  await expect(
+    bannerEditor.getByRole("button", { name: "Add photo +" }),
+  ).toBeDisabled();
+  await page.getByRole("button", { name: "Save private draft" }).click();
+  await page.waitForURL(/\?saved=1$/);
+  await visitor.goto(`${origin}/`);
+  await expect(
+    visitor.locator(".banner-gallery img[src^='/api/media/']"),
+  ).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Publish saved revision", exact: true })
+    .click();
+  await expect(page.getByRole("status")).toContainText(
+    "Publication state updated",
+  );
+  await visitor.goto(`${origin}/`);
+  await expect(visitor.locator(".banner-gallery .banner-photo")).toHaveCount(3);
+  for (let index = 0; index < 3; index++)
+    await expect(
+      visitor.getByRole("img", { name: `Banner research photo ${index + 1}` }),
+    ).toBeVisible();
+  await visitor.mouse.move(0, 0);
+  const layers = await visitor
+    .locator(".banner-photo")
+    .evaluateAll((cards) =>
+      cards.map((card) => (card as HTMLElement).style.zIndex).join(","),
+    );
+  await expect
+    .poll(
+      () =>
+        visitor
+          .locator(".banner-photo")
+          .evaluateAll((cards) =>
+            cards.map((card) => (card as HTMLElement).style.zIndex).join(","),
+          ),
+      { timeout: 10_000 },
+    )
+    .not.toBe(layers);
+  await visitor.locator(".banner-gallery").focus();
+  const pausedLayout = await visitor
+    .locator(".banner-photo")
+    .evaluateAll((cards) => cards.map((card) => card.getAttribute("style")));
+  await visitor.waitForTimeout(6500);
+  expect(
+    await visitor
+      .locator(".banner-photo")
+      .evaluateAll((cards) => cards.map((card) => card.getAttribute("style"))),
+  ).toEqual(pausedLayout);
+  console.log("PASS layered photos change alignment and stop when paused");
+  console.log(
+    "PASS selecting, saving, publishing, and showing three banner images together",
   );
   await page.goto(`${origin}/admin/recruitment/new`);
   await page
@@ -362,6 +566,16 @@ try {
     visitor.getByRole("navigation", { name: "Mobile navigation" }),
   ).toBeVisible();
   expect(pageErrors).toEqual([]);
+  await visitor.locator(".nav-trigger").click();
+  await visitor
+    .locator(".people-dropdown")
+    .getByRole("link", { name: /Advisory panel/ })
+    .click();
+  await visitor.waitForURL(`${origin}/advisory-panel`);
+  await expect(visitor.locator(".mobile-toggle")).toHaveAttribute(
+    "aria-expanded",
+    "false",
+  );
   console.log(
     "PASS mobile layout, navigation, screenshots, and no browser runtime errors",
   );
@@ -369,6 +583,39 @@ try {
   expect(await sitemap.text()).toContain("browser-paper");
   expect(await sitemap.text()).not.toContain("browser-album");
   console.log("PASS sitemap excludes archived content");
+  for (const width of [390, 768, 1280]) {
+    await visitor.setViewportSize({ width, height: 900 });
+    for (const route of [
+      "/research",
+      "/members",
+      "/advisory-panel",
+      "/achievements",
+      "/login",
+    ]) {
+      await visitor.goto(`${origin}${route}`);
+      expect(
+        await visitor.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+        ),
+        `${route} must fit at ${width}px`,
+      ).toBe(true);
+    }
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${origin}/admin`);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/admin-mobile.png",
+    fullPage: true,
+  });
+  expect(pageErrors).toEqual([]);
+  console.log(
+    "PASS research, people, achievements, login, and admin responsive layouts",
+  );
 } catch (error) {
   console.error("Browser verification failed.");
   console.error(serverLog.slice(-6000));

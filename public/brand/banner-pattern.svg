@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="660" viewBox="0 0 1440 660" fill="none">
+  <defs>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#125CE1" fill-opacity=".13"/></pattern>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop stop-color="white"/><stop offset="1" stop-color="black"/></linearGradient>
+    <mask id="edge"><rect width="290" height="660" fill="url(#fade)"/></mask>
+  </defs>
+  <rect x="0" y="70" width="290" height="470" fill="url(#dots)" mask="url(#edge)"/>
+  <g transform="translate(1440 660) rotate(180)"><rect width="290" height="470" fill="url(#dots)" mask="url(#edge)"/></g>
+  <g stroke="#125CE1" stroke-opacity=".13" stroke-width="1">
+    <path d="M-35 405H66L134 337H207L253 291"/>
+    <path d="M-35 453H88L156 385H229L275 339"/>
+    <path d="M1187 345L1233 299H1306L1374 231H1475"/>
+    <path d="M1165 297L1211 251H1284L1352 183H1475"/>
+    <path d="M48 175h12m-6-6v12M1303 465h12m-6-6v12" stroke-opacity=".3"/>
+    <circle cx="134" cy="337" r="5" fill="#F4F8FE"/>
+    <circle cx="229" cy="385" r="4" fill="#F4F8FE"/>
+    <circle cx="1233" cy="299" r="5" fill="#F4F8FE"/>
+    <circle cx="1352" cy="183" r="4" fill="#F4F8FE"/>
+  </g>
+  <g fill="#125CE1" fill-opacity=".22"><circle cx="66" cy="405" r="2.5"/><circle cx="1306" cy="299" r="2.5"/></g>
+</svg>

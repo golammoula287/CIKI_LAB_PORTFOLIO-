@@ -120,7 +120,11 @@ export function parseContent(kind: Kind, value: unknown): ContentData {
   };
   const fields =
     kind === "PAGE"
-      ? { sections: parsed.sections, coverId: parsed.coverId }
+      ? {
+          sections: parsed.sections,
+          coverId: parsed.coverId,
+          photos: parsed.photos,
+        }
       : kind === "DEPARTMENT"
         ? { icon: parsed.icon, coverId: parsed.coverId }
         : kind === "PERSON"

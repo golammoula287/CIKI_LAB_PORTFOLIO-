@@ -1,24 +1,50 @@
 import Link from "next/link";
-import { ArrowUpRight, FlaskConical } from "lucide-react";
-import { navigation } from "@/lib/catalog";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+import { PublicNavigation } from "./public-navigation";
 import { defaultSettings, type SettingsData } from "@/features/settings/schema";
 import { MediaImage } from "./media-image";
 export function Brand({
   settings = defaultSettings,
+  inverse = false,
+  stacked = false,
 }: {
   settings?: SettingsData;
+  inverse?: boolean;
+  stacked?: boolean;
 }) {
   return (
     <Link href="/" className="brand" aria-label={`${settings.labName} home`}>
-      <span className="brand-icon">
-        {settings.logoId ? (
+      {stacked ? (
+        <Image
+          src="/brand/ciki-full-logo.png"
+          alt=""
+          width={1800}
+          height={1050}
+          sizes="(max-width: 580px) 116px, 136px"
+          className="nav-full-logo"
+          priority
+        />
+      ) : settings.logoId ? (
+        <span className="brand-icon">
           <MediaImage id={settings.logoId} alt="" className="brand-logo" />
-        ) : (
-          <FlaskConical size={22} />
+        </span>
+      ) : (
+        <Image
+          src={
+            inverse ? "/brand/ciki-navbar-white.png" : "/brand/ciki-navbar.png"
+          }
+          alt=""
+          width={160}
+          height={60}
+          className="brand-wordmark"
+        />
+      )}
+      <span className="brand-description">
+        {(settings.logoId ||
+          !["CIKI", "CIKI Lab"].includes(settings.labName)) && (
+          <span className="brand-name">{settings.labName}</span>
         )}
-      </span>
-      <span>
-        {settings.labName}
         <small>{settings.tagline}</small>
       </span>
     </Link>
@@ -29,42 +55,24 @@ export function Header({
 }: {
   settings?: SettingsData;
 }) {
-  const labels = [
-    settings.researchLabel,
-    settings.achievementsLabel,
-    settings.membersLabel,
-    settings.recruitmentLabel,
-    settings.aboutLabel,
-  ];
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <Brand settings={settings} />
-        <nav aria-label="Main navigation">
-          {navigation.map(([, href], index) => (
-            <Link key={href} href={href}>
-              {labels[index]}
-            </Link>
-          ))}
-        </nav>
-        <Link className="contact-link" href="/contact">
-          Get in touch <ArrowUpRight size={16} />
-        </Link>
-        <details className="mobile-menu">
-          <summary>Menu</summary>
-          <nav aria-label="Mobile navigation">
-            {navigation.map(([, href], index) => (
-              <Link key={href} href={href}>
-                {labels[index]}
-              </Link>
-            ))}
-            <Link href="/contact">Contact</Link>
-          </nav>
-        </details>
+        <Brand settings={settings} stacked />
+        <PublicNavigation
+          labels={{
+            research: settings.researchLabel,
+            achievements: settings.achievementsLabel,
+            members: settings.membersLabel,
+            recruitment: settings.recruitmentLabel,
+            about: settings.aboutLabel,
+          }}
+        />
       </div>
     </header>
   );
 }
+
 export function Footer({
   settings = defaultSettings,
 }: {
@@ -74,7 +82,7 @@ export function Footer({
     <footer>
       <div className="container footer-grid">
         <div>
-          <Brand settings={settings} />
+          <Brand settings={settings} inverse />
           <p>{settings.description}</p>
         </div>
         <div>

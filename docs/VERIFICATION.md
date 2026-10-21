@@ -1,5 +1,13 @@
 # Verification record
 
+## Demo dataset and banner checkpoint — 22 October 2026
+
+Cleanup on user request: all 25 seeded demo records were removed and nine sample pages restored to their initial drafts. The three generated homepage banner images, original departments/categories, owner account, and audit history were preserved. A local cleanup backup is retained under ignored `.tmp/`. The opt-in demo seeder remains available for future testing.
+
+An opt-in, repeatable demo seed was applied to the configured Neon database: 25 demo-prefixed records (seven people, six achievements, four opportunities, five FAQs, three albums), plus sample copy for nine untouched initial pages. The existing Home page and its generated banner images were preserved. See [DEMO_DATA.md](DEMO_DATA.md) for test coverage and cleanup guidance.
+
+The seed's isolated integration check passed, including duplicate prevention, preservation of user edits, and private/archive states. The full isolated integration suite reported 10 passing results; 14 unit tests, type checking, lint, formatting, production build, and browser workflows passed. Live checks verified public demo content and exclusion of private/archived achievements. The wider banner has no visible pause button; motion pauses on hover/focus and respects reduced-motion preferences.
+
 ## Functional release checkpoint — 21 October 2026
 
 Verified with Node.js 24.22.0. UI redesign and additional features are deferred.
