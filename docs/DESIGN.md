@@ -1,5 +1,9 @@
 # CIKI blue design system
 
+## Mobile experience
+
+At phone widths (up to 580 px), public pages use a compact masthead and a fixed bottom navigation for Home, Research, Community, and Gallery. The top Menu retains access to every existing section, including achievements and the advisory panel. Active destinations have a blue surface and `aria-current`; the bottom bar reserves device safe-area space and the footer includes clearance. The banner uses a responsive heading, full-width touch-friendly actions, and a shorter image stack. Inputs use 16 px text to avoid focus zoom on phones. The admin workspace retains its separate navigation, with 44 px touch targets and automatic horizontal positioning of the current tab.
+
 The public website, login and invitation screens, and admin dashboard share the tokens in `src/app/globals.css`.
 
 | Token | Value | Use |

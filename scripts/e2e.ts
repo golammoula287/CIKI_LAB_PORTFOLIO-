@@ -550,7 +550,24 @@ try {
     fullPage: true,
   });
   await visitor.setViewportSize({ width: 390, height: 844 });
-  await visitor.reload();
+  await visitor.goto(`${origin}/`);
+  const mobileDock = visitor.getByRole("navigation", {
+    name: "Mobile quick navigation",
+  });
+  await expect(mobileDock).toBeVisible();
+  await expect(
+    mobileDock.getByRole("link", { name: "Home", exact: true }),
+  ).toHaveAttribute("aria-current", "page");
+  await visitor.screenshot({
+    path: "test-results/home-mobile.png",
+    fullPage: true,
+  });
+  await mobileDock.getByRole("link", { name: "Research", exact: true }).click();
+  await expect(visitor).toHaveURL(`${origin}/research`);
+  await expect(
+    mobileDock.getByRole("link", { name: "Research", exact: true }),
+  ).toHaveAttribute("aria-current", "page");
+  await visitor.goto(`${origin}/`);
   await expect(visitor.getByRole("heading", { level: 1 })).toBeVisible();
   expect(
     await visitor.evaluate(

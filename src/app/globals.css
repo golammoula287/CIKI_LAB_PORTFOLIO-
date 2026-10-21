@@ -1748,3 +1748,109 @@ html {
     width: 116px;
   }
 }
+
+/* Compact mobile workspace and persistent public navigation. */
+.mobile-dock {
+  display: none;
+}
+@media (max-width: 580px) {
+  :root {
+    --site-header-height: 76px;
+  }
+  html {
+    scroll-padding-top: 92px;
+    scroll-padding-bottom: 100px;
+  }
+  .site-header .header-inner {
+    min-height: 0;
+    padding-block: 8px;
+  }
+  .site-header .nav-full-logo {
+    width: 96px;
+  }
+  .site-header .mobile-toggle {
+    min-height: 44px;
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+  .site-header .public-navigation.is-open {
+    max-height: calc(100dvh - 160px);
+    overflow-y: auto;
+    padding: 16px 20px 24px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 16px 32px rgb(7 27 64 / 10%);
+  }
+  .site-header .public-navigation > a:not(.navigation-contact),
+  .site-header .nav-trigger {
+    min-height: 48px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+  .site-header .public-navigation > a[aria-current="page"] {
+    background: var(--brand-ice);
+  }
+  .mobile-dock {
+    position: fixed;
+    z-index: 45;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--line);
+    background: var(--white);
+    box-shadow: 0 -4px 24px rgb(7 27 64 / 5%);
+  }
+  .mobile-dock a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 52px;
+    border-radius: 12px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .mobile-dock a[aria-current="page"] {
+    color: var(--brand-royal);
+    background: var(--brand-ice);
+  }
+  body > footer {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  }
+  .page-section {
+    padding-block: 32px;
+  }
+  .page-heading h1 {
+    font-size: clamp(29px, 8vw, 38px);
+    line-height: 1.2;
+    letter-spacing: -1px;
+    overflow-wrap: anywhere;
+  }
+  .page-heading p {
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .content-block,
+  .person-card {
+    padding: 22px;
+  }
+  .filter-tabs {
+    gap: 8px;
+  }
+  .filter-tabs a,
+  .pagination a,
+  .button {
+    min-height: 44px;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 16px;
+    min-height: 46px;
+  }
+}

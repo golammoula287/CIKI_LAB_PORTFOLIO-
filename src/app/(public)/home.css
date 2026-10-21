@@ -708,3 +708,69 @@
     will-change: auto;
   }
 }
+
+@media (max-width: 580px) {
+  .ciki-home .ciki-intro {
+    min-height: auto;
+    padding: 36px 0 28px;
+  }
+  .ciki-home .intro-kicker {
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    margin-bottom: 18px;
+  }
+  .ciki-home .ciki-intro h1 {
+    font-size: clamp(33px, 9.2vw, 45px);
+    line-height: 1.17;
+    letter-spacing: -1.4px;
+    margin-bottom: 20px;
+  }
+  .ciki-home .intro-description {
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .ciki-home .intro-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .ciki-home .intro-actions > a {
+    justify-content: center;
+    min-height: 48px;
+    border-radius: 12px;
+  }
+  .ciki-home .intro-link {
+    border: 1px solid var(--line);
+    background: white;
+  }
+  .ciki-home .intro-institution {
+    margin-top: 22px;
+    max-width: 100%;
+  }
+  .ciki-home .intro-visual {
+    margin-top: 12px;
+  }
+  .ciki-home .banner-photo-stage {
+    height: clamp(220px, 65vw, 290px);
+  }
+  .ciki-home .home-sections .container {
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 24px;
+    min-height: 48px;
+    scrollbar-width: none;
+  }
+  .ciki-home .home-sections a {
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .ciki-home h2 {
+    font-size: clamp(27px, 7.5vw, 33px);
+    line-height: 1.25;
+  }
+}
